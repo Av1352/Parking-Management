@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 
-# Initialize Pygame
 pygame.init()
 
 # Constants
@@ -23,7 +22,7 @@ clock = pygame.time.Clock()
 
 # Load car sprites for all 4 orientations
 car_images = [pygame.image.load("assets/car-up.png"), pygame.image.load("assets/car-down.png"),
-              pygame.image.load("assets/car-left.png"), pygame.image.load("assets/car-right.png")]
+            pygame.image.load("assets/car-left.png"), pygame.image.load("assets/car-right.png")]
 obstacle_image = pygame.image.load("assets/obstacle.png")
 
 

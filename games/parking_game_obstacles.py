@@ -17,21 +17,16 @@ WHITE = (255, 255, 255)
 CAR_SPEED = 60
 NO_OF_OBSTACLES = 6
 
-
-# Create the game window
 screen = pygame.display.set_mode((STATE_WIDTH, STATE_HEIGHT))
 pygame.display.set_caption("Car Parking Game")
 clock = pygame.time.Clock()
 
-# Load car sprites for all 4 orientations
 car_images = [pygame.image.load("assets/car-up.png"),
-              pygame.image.load("assets/car-down.png"),
-              pygame.image.load("assets/car-left.png"),
-              pygame.image.load("assets/car-right.png")]
+            pygame.image.load("assets/car-down.png"),
+            pygame.image.load("assets/car-left.png"),
+            pygame.image.load("assets/car-right.png")]
 
 obstacle_image = pygame.image.load("assets/obstacle.png")
-
-
 
 def grid_to_pixels(x, y):
     return x * TILE_SIZE, y * TILE_SIZE
