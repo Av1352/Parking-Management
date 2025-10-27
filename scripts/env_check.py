@@ -1,8 +1,3 @@
-"""
-python env_check.py --env feature
-python env_check.py --env image
-python env_check.py --env multi
-"""
 import argparse
 from stable_baselines3.common.env_checker import check_env
 from envs.parking_feature_env import ParkingFeature

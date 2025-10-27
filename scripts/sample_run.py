@@ -1,8 +1,3 @@
-"""
-python sample_run.py --env feature
-python sample_run.py --env image
-python sample_run.py --env multi
-"""
 import argparse
 
 from envs.parking_feature_env import ParkingFeature

@@ -1,6 +1,3 @@
-"""
-python eval_rl.py --env feature --algo PPO --model_path ./models/PPO_feature/final_model.zip
-"""
 import argparse
 from stable_baselines3 import PPO, DQN
 from envs.parking_feature_env import ParkingFeature
