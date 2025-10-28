@@ -2,62 +2,81 @@ import streamlit as st
 import sys
 import os
 
-# This path makes 'sample_run.py' discoverable when running from repo root or from 'streamlit_app'
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'scripts')))
+# Ensure repo root is in Python path to allow your env imports!
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from scripts.sample_run import ParkingFeature, ParkingImage, ParkingMultiEnv
+# RL Environment and Agent Imports
+from envs.feature_based.parking_feature_env import ParkingFeature
+import pygame
+import numpy as np
+from PIL import Image
+import imageio
 
-# App sidebar options
-st.sidebar.title("Parking Management RL Dashboard")
-mode = st.sidebar.selectbox("Select mode", ["Run Environment", "Train Agent", "Evaluate Agent", "View Logs"])
+# Stable Baselines3 for RL Agent
+from stable_baselines3 import PPO
 
-if mode == "Run Environment":
-    st.header("Run Parking Environment")
-    env_type = st.selectbox("Environment", ["feature", "image", "multi"])
-    episodes = st.slider("Episodes", 1, 10, 1)
-    steps = st.slider("Max Steps per episode", 10, 300, 100)
+st.set_page_config(page_title="Parking RL Demo", layout="centered")
+st.title("Parking Management RL Agent Demo (Feature-based PPO)")
+st.sidebar.title("Demo Controls")
 
-    run_button = st.button("Run now")
-    if run_button:
-        if env_type == "feature":
-            env = ParkingFeature(render_mode="human")
-        elif env_type == "image":
-            env = ParkingImage(render_mode="human")
-        elif env_type == "multi":
-            env = ParkingMultiEnv(render_mode="human")
+# Sidebar controls
+episodes = st.sidebar.slider("Episodes", 1, 5, 1)
+steps_per_episode = st.sidebar.slider("Steps per episode", 10, 60, 30)
+policy = st.sidebar.selectbox("Policy", ["Trained PPO Agent", "Random Policy"])
 
-        # Run sample episode(s)
+ppo_model_path = os.path.join("models", "best_model.zip")
+
+# Try loading agent
+model = None
+if os.path.exists(ppo_model_path):
+    try:
+        model = PPO.load(ppo_model_path)
+        st.sidebar.success("Trained PPO model loaded!")
+    except Exception as e:
+        st.sidebar.error(f"Agent load error: {e}")
+else:
+    st.sidebar.warning("Trained PPO model not found. Using random actions.")
+
+# Utility: Convert pygame surface to image
+def get_frame(surface):
+    arr = pygame.surfarray.array3d(surface)
+    arr = np.transpose(arr, (1, 0, 2))
+    return Image.fromarray(arr)
+
+if st.button("Run Demo and Show GIF"):
+    env = ParkingFeature(render_mode="human")
+    all_frames = []
+    all_rewards = []
+    with st.spinner("Running episodes..."):
         for ep in range(episodes):
-            st.write(f"Episode {ep+1}:")
             obs, info = env.reset()
-            for step in range(steps):
-                if env_type == "multi":
-                    actions = {agent: env.action_space(agent).sample() for agent in env.agents}
-                    obs, rewards, terminations, truncations, infos = env.step(actions)
-                    if not env.agents:
-                        break
+            frames, rewards, terminated, truncated = [], [], False, False
+            for step in range(steps_per_episode):
+                if policy == "Trained PPO Agent" and model is not None:
+                    action, _ = model.predict(obs, deterministic=True)
                 else:
                     action = env.action_space.sample()
-                    obs, reward, terminated, truncated, info = env.step(action)
-                    if terminated or truncated:
-                        obs, info = env.reset()
-            st.write("Episode finished.")
+                obs, reward, terminated, truncated, info = env.step(action)
+                rewards.append(reward)
+                frame = get_frame(env.window)
+                frames.append(np.array(frame))
+                if terminated or truncated:
+                    break
+            all_frames.extend(frames)
+            all_rewards.append(sum(rewards))
+        # Save GIF
+        gif_path = "demos/parking_demo.gif"
+        imageio.mimsave(gif_path, all_frames, duration=0.15)
+    st.image(gif_path, caption=f"Parking Simulation GIF ({policy})")
+    st.success(f"Episode Rewards: {all_rewards}")
 
-elif mode == "Train Agent":
-    st.header("Training (CLI only for now)")
-    st.info("To train, use the CLI: `python scripts/train_rl.py --env feature --algo PPO --timesteps 100000`")
+st.markdown("""
+---
+**How to use this demo:**  
+- Select number of episodes/steps and policy ("Trained PPO Agent" or "Random").
+- Click "Run Demo and Show GIF".
+- The GIF shows the car moving within the parking environment.
+- Rewards are displayed for each episode; high rewards indicate successful parking.
+""")
 
-elif mode == "Evaluate Agent":
-    st.header("Evaluation (CLI only for now)")
-    st.info("To evaluate, use the CLI: `python scripts/eval_rl.py --env feature --algo PPO --model_path PATH_TO_MODEL`")
-
-elif mode == "View Logs":
-    st.header("Logs & Outputs")
-    log_path = "./logs/"
-    if os.path.exists(log_path):
-        logs = os.listdir(log_path)
-        st.write("Available logs:", logs)
-    else:
-        st.write("No logs found.")
-
-st.sidebar.caption("Parking-Management Suite | RL Dashboard")
+st.caption("Powered by RL and Streamlit. For interactive demos, visuals, and custom agents, extend this script as needed!")

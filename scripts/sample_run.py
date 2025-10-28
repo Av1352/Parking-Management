@@ -1,6 +1,5 @@
 import argparse
-import os, sys
-sys.path("envs")
+import os
 from envs.feature_based.parking_feature_env import ParkingFeature
 from envs.image_based.parking_image_env import ParkingImage
 from envs.multi_agent.parking_multi_env import ParkingMultiEnv

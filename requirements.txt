@@ -4,5 +4,9 @@ pettingzoo
 pygame
 numpy
 pytest
-streamlit
 argparse
+streamlit
+pygame
+numpy
+imageio
+Pillow
