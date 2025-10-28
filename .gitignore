@@ -7,7 +7,6 @@ models/
 monitor/
 *.npz
 *.csv
-*.txt
 
 __pycache__/
 .ipynb_checkpoints/

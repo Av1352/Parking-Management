@@ -1,8 +1,9 @@
 import argparse
-
-from envs.parking_feature_env import ParkingFeature
-from envs.parking_image_env import ParkingImage
-from envs.parking_multi_env import ParkingMultiEnv
+import os, sys
+sys.path("envs")
+from envs.feature_based.parking_feature_env import ParkingFeature
+from envs.image_based.parking_image_env import ParkingImage
+from envs.multi_agent.parking_multi_env import ParkingMultiEnv
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", choices=["feature", "image", "multi"], default="feature", help="Which environment to run")

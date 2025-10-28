@@ -1,5 +1,5 @@
 import pytest
-from envs.parking_multi_env import ParkingMultiEnv
+from envs.multi_agent.parking_multi_env import ParkingMultiEnv
 
 def test_env_reset_and_step():
     env = ParkingMultiEnv()

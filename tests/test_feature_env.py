@@ -4,7 +4,7 @@ Unit tests for the ParkingFeature RL environment.
 Run with: pytest tests/test_feature_env.py
 """
 import pytest
-from envs.parking_feature_env import ParkingFeature
+from envs.feature_based.parking_feature_env import ParkingFeature
 
 def test_env_reset_and_step():
     env = ParkingFeature()

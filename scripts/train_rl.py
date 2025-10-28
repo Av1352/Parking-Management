@@ -10,9 +10,9 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.monitor import Monitor
 
-from envs.parking_feature_env import ParkingFeature
-from envs.parking_image_env import ParkingImage
-from envs.parking_multi_env import ParkingMultiEnv
+from envs.feature_based.parking_feature_env import ParkingFeature
+from envs.image_based.parking_image_env import ParkingImage
+from envs.multi_agent.parking_multi_env import ParkingMultiEnv
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", choices=["feature", "image", "multi"], required=True)

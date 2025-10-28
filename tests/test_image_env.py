@@ -1,5 +1,5 @@
 import pytest
-from envs.parking_image_env import ParkingImage
+from envs.image_based.parking_image_env import ParkingImage
 
 def test_env_reset_and_step():
     env = ParkingImage()
